@@ -63,7 +63,7 @@ export default function PapersPage() {
               Add Your First Paper
             </Button>
             <p className="text-xs text-muted-foreground mt-4">
-              Supported formats: PDF, DOI, arXiv links
+              Supported formats: PDF, Images, PowerPoint, Word documents
             </p>
           </CardContent>
         </Card>

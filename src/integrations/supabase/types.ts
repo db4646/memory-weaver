@@ -158,6 +158,8 @@ export type Database = {
           created_at: string
           doi: string | null
           field_of_study: string | null
+          file_type: string | null
+          file_url: string | null
           id: string
           importance_score: number | null
           keywords: string[] | null
@@ -176,6 +178,8 @@ export type Database = {
           created_at?: string
           doi?: string | null
           field_of_study?: string | null
+          file_type?: string | null
+          file_url?: string | null
           id?: string
           importance_score?: number | null
           keywords?: string[] | null
@@ -194,6 +198,8 @@ export type Database = {
           created_at?: string
           doi?: string | null
           field_of_study?: string | null
+          file_type?: string | null
+          file_url?: string | null
           id?: string
           importance_score?: number | null
           keywords?: string[] | null
