@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { Database, Plus, Search, Network } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddConceptModal } from "@/components/modals/AddConceptModal";
 
 export default function KnowledgePage() {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
@@ -17,7 +21,10 @@ export default function KnowledgePage() {
             Explore connections between concepts in your knowledge base
           </p>
         </div>
-        <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+        <Button 
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          onClick={() => setIsAddModalOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Concept
         </Button>
@@ -65,6 +72,12 @@ export default function KnowledgePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add Concept Modal */}
+      <AddConceptModal 
+        open={isAddModalOpen} 
+        onOpenChange={setIsAddModalOpen} 
+      />
     </div>
   );
 }
