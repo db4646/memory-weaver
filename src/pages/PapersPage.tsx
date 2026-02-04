@@ -1,9 +1,13 @@
-import { BookOpen, Plus, Search, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { BookOpen, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AddPaperModal } from "@/components/modals/AddPaperModal";
 
 export default function PapersPage() {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
@@ -17,7 +21,10 @@ export default function PapersPage() {
             Manage your paper library and extract knowledge
           </p>
         </div>
-        <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+        <Button 
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          onClick={() => setIsAddModalOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Paper
         </Button>
@@ -48,7 +55,10 @@ export default function PapersPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button 
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={() => setIsAddModalOpen(true)}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Your First Paper
             </Button>
@@ -58,6 +68,12 @@ export default function PapersPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add Paper Modal */}
+      <AddPaperModal 
+        open={isAddModalOpen} 
+        onOpenChange={setIsAddModalOpen} 
+      />
     </div>
   );
 }
