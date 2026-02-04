@@ -8,6 +8,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import Index from "./pages/Index";
 import MemoryPage from "./pages/MemoryPage";
 import PapersPage from "./pages/PapersPage";
+import PaperViewPage from "./pages/PaperViewPage";
 import KnowledgePage from "./pages/KnowledgePage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
@@ -26,6 +27,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/memory" element={<MemoryPage />} />
               <Route path="/papers" element={<PapersPage />} />
+              <Route path="/paper/:id" element={<PaperViewPage />} />
               <Route path="/knowledge" element={<KnowledgePage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="*" element={<NotFound />} />
