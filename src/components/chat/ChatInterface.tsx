@@ -5,7 +5,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ChatMessage } from "./ChatMessage";
 import { MemorySidebar } from "./MemorySidebar";
-import { FeatureToggles } from "./FeatureToggles";
 import { useChat } from "@/hooks/useChat";
 import ReactMarkdown from "react-markdown";
 
@@ -82,12 +81,6 @@ export function ChatInterface() {
                 Ask me about papers, concepts, or ideas. I'll help you understand, 
                 remember, and connect knowledge across your research journey.
               </p>
-              {/* Feature toggles */}
-              <div className="mb-8">
-                <h3 className="text-sm font-medium text-muted-foreground mb-4">Active Features</h3>
-                <FeatureToggles />
-              </div>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
                 {[
                   "Explain the transformer architecture",

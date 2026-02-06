@@ -1,10 +1,11 @@
-import { Settings, User, Bell, Shield, Zap, RefreshCw } from "lucide-react";
+import { Settings, User, Bell, Shield, Zap, RefreshCw, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useAuth } from "@/hooks/useAuth";
+import { FeatureToggles } from "@/components/chat/FeatureToggles";
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -47,6 +48,20 @@ export default function SettingsPage() {
                   : "Unknown"}
               </p>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Active Features */}
+        <Card className="border-border/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Cpu className="h-4 w-4" />
+              Active Features
+            </CardTitle>
+            <CardDescription>Toggle system capabilities on or off</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FeatureToggles />
           </CardContent>
         </Card>
 
