@@ -7,18 +7,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth } from "@/hooks/useAuth";
 
 export function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (isLogin) {
+      if (mode === "forgot") {
+        await resetPassword(email);
+      } else if (mode === "login") {
         await signIn(email, password);
       } else {
         await signUp(email, password);
@@ -111,12 +113,14 @@ export function AuthPage() {
               </div>
             </div>
             <CardTitle className="text-2xl">
-              {isLogin ? "Welcome back" : "Create account"}
+              {mode === "login" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password"}
             </CardTitle>
             <CardDescription>
-              {isLogin
+              {mode === "login"
                 ? "Sign in to access your research memories"
-                : "Start building your knowledge base"}
+                : mode === "signup"
+                ? "Start building your knowledge base"
+                : "Enter your email to receive a reset link"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -133,19 +137,32 @@ export function AuthPage() {
                   className="bg-muted/50"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="bg-muted/50"
-                />
-              </div>
+              {mode !== "forgot" && (
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="bg-muted/50"
+                  />
+                </div>
+              )}
+              {mode === "login" && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => setMode("forgot")}
+                    className="text-sm text-primary hover:text-primary/80 transition-colors"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
               <Button
                 type="submit"
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
@@ -154,26 +171,36 @@ export function AuthPage() {
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <div className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    {isLogin ? "Signing in..." : "Creating account..."}
+                    {mode === "login" ? "Signing in..." : mode === "signup" ? "Creating account..." : "Sending reset link..."}
                   </div>
                 ) : (
-                  isLogin ? "Sign In" : "Create Account"
+                  mode === "login" ? "Sign In" : mode === "signup" ? "Create Account" : "Send Reset Link"
                 )}
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {isLogin ? (
-                  <>Don't have an account? <span className="text-primary font-medium">Sign up</span></>
-                ) : (
-                  <>Already have an account? <span className="text-primary font-medium">Sign in</span></>
-                )}
-              </button>
+            <div className="mt-6 text-center space-y-2">
+              {mode === "forgot" ? (
+                <button
+                  type="button"
+                  onClick={() => setMode("login")}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Back to <span className="text-primary font-medium">Sign in</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {mode === "login" ? (
+                    <>Don't have an account? <span className="text-primary font-medium">Sign up</span></>
+                  ) : (
+                    <>Already have an account? <span className="text-primary font-medium">Sign in</span></>
+                  )}
+                </button>
+              )}
             </div>
           </CardContent>
         </Card>
