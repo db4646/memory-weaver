@@ -49,7 +49,7 @@ export function ChatInterface() {
               <Sparkles className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="font-semibold">Research Assistant</h1>
+              <h1 className="font-semibold">AI Assistant</h1>
               <p className="text-xs text-muted-foreground font-mono">Hybrid memory active</p>
             </div>
           </div>
