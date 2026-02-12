@@ -36,7 +36,7 @@ export function Sidebar() {
         {!collapsed && (
           <div className="flex flex-col">
             <span className="font-semibold text-sidebar-foreground">MNEMON</span>
-            <span className="text-xs text-muted-foreground font-mono">Research Assistant</span>
+            <span className="text-xs text-muted-foreground font-mono">AI Assistant</span>
           </div>
         )}
       </div>
