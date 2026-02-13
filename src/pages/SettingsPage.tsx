@@ -1,4 +1,5 @@
-import { Settings, User, Bell, Shield, Zap, RefreshCw, Cpu } from "lucide-react";
+import { useState } from "react";
+import { Settings, User, Bell, Shield, Zap, RefreshCw, Cpu, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -6,9 +7,41 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useAuth } from "@/hooks/useAuth";
 import { FeatureToggles } from "@/components/chat/FeatureToggles";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export default function SettingsPage() {
   const { user } = useAuth();
+  const [consolidating, setConsolidating] = useState(false);
+
+  const handleRunConsolidation = async () => {
+    if (!user) {
+      toast.error("You must be logged in to run consolidation.");
+      return;
+    }
+    setConsolidating(true);
+    try {
+      const { error: decayError } = await supabase.rpc("apply_memory_decay");
+      if (decayError) throw decayError;
+
+      const { error: logError } = await supabase
+        .from("consolidation_logs")
+        .insert({
+          user_id: user.id,
+          consolidation_type: "decay_update",
+          memories_affected: 0,
+          details: { triggered_by: "manual" },
+        });
+      if (logError) throw logError;
+
+      toast.success("Memory consolidation completed successfully!");
+    } catch (err: any) {
+      console.error("Consolidation error:", err);
+      toast.error(err.message || "Consolidation failed.");
+    } finally {
+      setConsolidating(false);
+    }
+  };
 
   return (
     <div className="h-full overflow-y-auto">
@@ -139,9 +172,18 @@ export default function SettingsPage() {
               </div>
               <Switch />
             </div>
-            <Button variant="outline" className="w-full">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Run Consolidation Now
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleRunConsolidation}
+              disabled={consolidating}
+            >
+              {consolidating ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-2" />
+              )}
+              {consolidating ? "Running..." : "Run Consolidation Now"}
             </Button>
           </CardContent>
         </Card>
