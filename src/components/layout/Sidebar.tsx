@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Brain, MessageSquare, BookOpen, Database, Settings, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Brain, MessageSquare, BookOpen, Database, Settings, LogOut, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
+import { useAuth } from "@/hooks/useAuth";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navItems = [
@@ -15,6 +16,7 @@ const navItems = [
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const { signOut, user } = useAuth();
 
   return (
     <aside
@@ -65,6 +67,33 @@ export function Sidebar() {
         ))}
       </nav>
 
+      {/* User section */}
+      <div className="p-2 border-t border-sidebar-border">
+        {!collapsed && user && (
+          <div className="px-3 py-2 mb-2">
+            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+          </div>
+        )}
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={signOut}
+              className={cn(
+                "w-full justify-start gap-3 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent",
+                collapsed && "justify-center px-2"
+              )}
+            >
+              <LogOut className="h-4 w-4" />
+              {!collapsed && <span>Sign Out</span>}
+            </Button>
+          </TooltipTrigger>
+          {collapsed && (
+            <TooltipContent side="right">Sign Out</TooltipContent>
+          )}
+        </Tooltip>
+      </div>
 
       {/* Collapse toggle */}
       <Button
