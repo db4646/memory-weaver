@@ -98,7 +98,7 @@ export function useChat() {
     []
   );
 
-
+  const sendMessage = useCallback(
     async (content: string) => {
       if (!user || !conversation) return;
 
