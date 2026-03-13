@@ -60,8 +60,29 @@ export function useChat() {
   const extractSemanticMemory = useCallback(
     async (userId: string, userQuery: string, assistantResponse: string) => {
       try {
+        const queryLower = userQuery.trim().toLowerCase();
+        const normalized = queryLower.replace(/[.,!?]/g, "");
+        const words = normalized.split(/\s+/).filter(Boolean);
+
+        // Keep short/small-talk interactions in episodic memory only
+        const smallTalkPhrases = new Set([
+          "hi",
+          "hello",
+          "hey",
+          "ok",
+          "okay",
+          "thanks",
+          "thank you",
+          "good morning",
+          "good afternoon",
+          "good evening",
+        ]);
+
+        if (smallTalkPhrases.has(normalized) || words.length <= 2) {
+          return;
+        }
+
         // Determine category from query content
-        const queryLower = userQuery.toLowerCase();
         let category = "general";
         const categoryMap: Record<string, string[]> = {
           "machine learning": ["machine learning", "ml", "deep learning", "neural network", "training", "model"],
