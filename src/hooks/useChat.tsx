@@ -56,7 +56,49 @@ export function useChat() {
     initConversation();
   }, [user]);
 
-  const sendMessage = useCallback(
+  // Extract semantic memories from chat automatically
+  const extractSemanticMemory = useCallback(
+    async (userId: string, userQuery: string, assistantResponse: string) => {
+      try {
+        // Determine category from query content
+        const queryLower = userQuery.toLowerCase();
+        let category = "general";
+        const categoryMap: Record<string, string[]> = {
+          "machine learning": ["machine learning", "ml", "deep learning", "neural network", "training", "model"],
+          "nlp": ["nlp", "natural language", "text processing", "tokenization", "language model"],
+          "programming": ["code", "python", "javascript", "programming", "function", "algorithm"],
+          "research": ["paper", "study", "research", "methodology", "experiment"],
+          "mathematics": ["math", "equation", "calculus", "statistics", "probability"],
+        };
+
+        for (const [cat, keywords] of Object.entries(categoryMap)) {
+          if (keywords.some((kw) => queryLower.includes(kw))) {
+            category = cat;
+            break;
+          }
+        }
+
+        // Create a concise semantic memory from the conversation
+        const summaryContent = `Topic: ${userQuery.slice(0, 150)}. Key points: ${assistantResponse
+          .replace(/[#*_]/g, "")
+          .slice(0, 300)}`;
+
+        await supabase.from("semantic_memories").insert({
+          user_id: userId,
+          content: summaryContent,
+          category,
+          source_type: "conversation",
+          source_reference: `chat-${new Date().toISOString()}`,
+          importance_score: 0.7,
+        });
+      } catch (err) {
+        console.error("Failed to extract semantic memory:", err);
+      }
+    },
+    []
+  );
+
+
     async (content: string) => {
       if (!user || !conversation) return;
 
