@@ -208,6 +208,9 @@ export function useChat() {
             assistant_response_preview: assistantContent.slice(0, 200),
           },
         });
+
+        // Auto-extract semantic memory from the conversation
+        extractSemanticMemory(user.id, content, assistantContent);
       } catch (error) {
         console.error("Chat error:", error);
         toast.error("Failed to get response. Please try again.");
