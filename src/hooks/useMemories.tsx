@@ -51,7 +51,13 @@ export function useMemories() {
 
     fetchMemories();
 
-    // Subscribe to realtime updates
+    // Debounced realtime updates to prevent excessive re-renders
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    const debouncedFetch = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => fetchMemories(false), 1000);
+    };
+
     const semanticChannel = supabase
       .channel("semantic_memories_changes")
       .on(
@@ -62,9 +68,7 @@ export function useMemories() {
           table: "semantic_memories",
           filter: `user_id=eq.${user.id}`,
         },
-        () => {
-          fetchMemories();
-        }
+        debouncedFetch
       )
       .subscribe();
 
@@ -78,13 +82,12 @@ export function useMemories() {
           table: "episodic_memories",
           filter: `user_id=eq.${user.id}`,
         },
-        () => {
-          fetchMemories();
-        }
+        debouncedFetch
       )
       .subscribe();
 
     return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
       semanticChannel.unsubscribe();
       episodicChannel.unsubscribe();
     };
