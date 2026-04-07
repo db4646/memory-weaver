@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SemanticMemory, EpisodicMemory } from "@/types/memory";
 import { useAuth } from "./useAuth";
@@ -18,8 +18,8 @@ export function useMemories() {
       return;
     }
 
-    const fetchMemories = async () => {
-      setLoading(true);
+    const fetchMemories = async (showLoading = true) => {
+      if (showLoading) setLoading(true);
 
       // Fetch semantic memories ordered by decay factor (most relevant first)
       const { data: semantic } = await supabase
@@ -51,7 +51,13 @@ export function useMemories() {
 
     fetchMemories();
 
-    // Subscribe to realtime updates
+    // Debounced realtime updates to prevent excessive re-renders
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    const debouncedFetch = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => fetchMemories(false), 1000);
+    };
+
     const semanticChannel = supabase
       .channel("semantic_memories_changes")
       .on(
@@ -62,9 +68,7 @@ export function useMemories() {
           table: "semantic_memories",
           filter: `user_id=eq.${user.id}`,
         },
-        () => {
-          fetchMemories();
-        }
+        debouncedFetch
       )
       .subscribe();
 
@@ -78,13 +82,12 @@ export function useMemories() {
           table: "episodic_memories",
           filter: `user_id=eq.${user.id}`,
         },
-        () => {
-          fetchMemories();
-        }
+        debouncedFetch
       )
       .subscribe();
 
     return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
       semanticChannel.unsubscribe();
       episodicChannel.unsubscribe();
     };
