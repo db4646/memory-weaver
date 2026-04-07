@@ -18,8 +18,8 @@ export function useMemories() {
       return;
     }
 
-    const fetchMemories = async () => {
-      setLoading(true);
+    const fetchMemories = async (showLoading = true) => {
+      if (showLoading) setLoading(true);
 
       // Fetch semantic memories ordered by decay factor (most relevant first)
       const { data: semantic } = await supabase
