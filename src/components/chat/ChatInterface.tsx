@@ -168,7 +168,7 @@ export function ChatInterface() {
       </div>
 
       {/* Memory sidebar */}
-      <MemorySidebar />
+      <MemoizedMemorySidebar />
     </div>
   );
 }
