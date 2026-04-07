@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo, useCallback } from "react";
 import { Send, Sparkles, Brain, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +7,8 @@ import { ChatMessage } from "./ChatMessage";
 import { MemorySidebar } from "./MemorySidebar";
 import { useChat } from "@/hooks/useChat";
 import ReactMarkdown from "react-markdown";
+
+const MemoizedMemorySidebar = memo(MemorySidebar);
 
 export function ChatInterface() {
   const [input, setInput] = useState("");
